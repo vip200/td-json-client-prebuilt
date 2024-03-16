@@ -1,6 +1,6 @@
 # td-json-client-prebuilt
 
-The repository contains tdlib binaries which are built using github actions without manual intervention. Check [build-tdlib.yml](https://github.com/ivk1800/td-json-client-prebuilt/blob/master/.github/workflows/build-tdlib.yml) to make sure. Check [releases](https://github.com/ivk1800/td-json-client-prebuilt/releases) page to download the desired binary.
+The repository contains tdlib binaries which are built using github actions without manual intervention. Check [build-tdlib.yml](https://github.com/vip200/td-json-client-prebuilt/blob/master/.github/workflows/build-tdlib.yml) to make sure. Check [releases](https://github.com/vip200/td-json-client-prebuilt/releases) page to download the desired binary.
 
 Supported platforms:
 
