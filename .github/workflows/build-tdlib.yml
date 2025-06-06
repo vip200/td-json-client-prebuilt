@@ -1,10 +1,12 @@
 name: tdlib-build
 
 on:
-  push:
+  workflow_dispatch:  # הפעלה ידנית
+  push:               # הפעלה אוטומטית לפי קבצים מסוימים
     paths:
-      - '.github/workflows/td-version.json'
-      - '.github/workflows/build-tdlib.yml'
+      - .github/workflows/td-version.json
+      - .github/workflows/build-tdlib.yml
+
 
 jobs:
   build-android:
