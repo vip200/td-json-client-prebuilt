@@ -1,12 +1,11 @@
 name: tdlib-build
 
 on:
-  workflow_dispatch:  # הפעלה ידנית
-  push:               # הפעלה אוטומטית לפי קבצים מסוימים
+  workflow_dispatch:
+  push:
     paths:
       - .github/workflows/td-version.json
       - .github/workflows/build-tdlib.yml
-
 
 jobs:
   build-android:
@@ -16,20 +15,18 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           java-version: 17-ea
-          distribution: adopt # zulu, temurin, 
+          distribution: adopt
       - name: JSON to variables
         uses: rgarcia-phi/json-to-variables@v1.1.0
         with:
           filename: '.github/workflows/td-version.json'
           prefix: td
       - name: show tree
-        run: |
-           tree .
+        run: tree .
       - name: setup
         run: |
           java --version
           sudo apt-get install -y make git zlib1g-dev libssl-dev gperf cmake clang libc++-dev libc++abi-dev ninja-build
-
       - name: clone
         run: |
           git clone https://github.com/tdlib/td.git
@@ -37,14 +34,11 @@ jobs:
           git checkout ${{ env.td_commit_hash }}
           git show --summary
       - name: show tree
-        run: |
-           tree .
-     
+        run: tree .
       - name: check-environment
         run: |
           cd td/example/android
           ./check-environment.sh
-      
       - name: sdk
         run: |
           java --version
@@ -58,7 +52,6 @@ jobs:
         run: |
           cd td/example/android
           ./build-tdlib.sh '' '' '' '' 'JSON'
-          
       - name: Release
         uses: ncipollo/release-action@v1
         with:
@@ -67,55 +60,42 @@ jobs:
           body: https://github.com/tdlib/td/tree/${{ env.td_commit_hash }}
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: 'td/example/android/tdlib/tdlib.zip'
+          allowUpdates: true
+
   build-macos-intel:
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
-
       - name: JSON to variables
         uses: rgarcia-phi/json-to-variables@v1.1.0
         with:
           filename: '.github/workflows/td-version.json'
           prefix: td
-
       - name: setup
-        run: |
-          brew install gperf cmake coreutils
-
+        run: brew install gperf cmake coreutils
       - name: clone
         run: |
           git clone https://github.com/tdlib/td.git
           cd td
           git checkout ${{ env.td_commit_hash }}
           git show --summary
-
       - name: setup td
         run: |
           cd td/example/ios
           sed -i '.bak' '11s/.*/platforms="macOS"/' build-openssl.sh
           sed -i '.bak' '24s/.*/platforms="macOS"/' build.sh
-
       - name: build ssl
         run: |
           cd td/example/ios
           ./build-openssl.sh
-
       - name: build
         run: |
           cd td/example/ios
           ./build.sh
-
-#      - name: fake build
-#        run: |
-#          mkdir -p td/example/ios/tdjson/macOS/lib/
-#          cd td/example/ios/tdjson/macOS/lib/
-#          echo "libtdjson" > libtdjson.dylib
-
       - name: zip
         run: |
           cd td/example/ios/tdjson/macOS/lib/
           zip libtdjson.zip libtdjson.dylib
-
       - name: Release
         uses: ncipollo/release-action@v1
         with:
@@ -124,29 +104,25 @@ jobs:
           body: https://github.com/tdlib/td/tree/${{ env.td_commit_hash }}
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: 'td/example/ios/tdjson/macOS/lib/libtdjson.zip'
+          allowUpdates: true
 
   build-ios:
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
-
       - name: JSON to variables
         uses: rgarcia-phi/json-to-variables@v1.1.0
         with:
           filename: '.github/workflows/td-version.json'
           prefix: td
-
       - name: setup
-        run: |
-          brew install gperf cmake coreutils
-
+        run: brew install gperf cmake coreutils
       - name: clone
         run: |
           git clone https://github.com/tdlib/td.git
           cd td
           git checkout ${{ env.td_commit_hash }}
           git show --summary
-
       - name: setup td
         run: |
           cd td
@@ -157,28 +133,18 @@ jobs:
           cd ../example/ios
           sed -i '.bak' '11s/.*/platforms="iOS"/' build-openssl.sh
           sed -i '.bak' '24s/.*/platforms="iOS"/' build.sh
-
       - name: build ssl
         run: |
           cd td/example/ios
           ./build-openssl.sh
-
       - name: build
         run: |
           cd td/example/ios
           ./build.sh
-
-#      - name: fake build
-#        run: |
-#          mkdir -p td/example/ios/tdjson/iOS/lib/
-#          cd td/example/ios/tdjson/iOS/lib/
-#          echo "libtdjson" > libtdjson.dylib
-
       - name: zip
         run: |
           cd td/example/ios/tdjson/iOS/lib/
           zip libtdjson.zip libtdjson.dylib
-
       - name: Release
         uses: ncipollo/release-action@v1
         with:
@@ -187,29 +153,25 @@ jobs:
           body: https://github.com/tdlib/td/tree/${{ env.td_commit_hash }}
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: 'td/example/ios/tdjson/iOS/lib/libtdjson.zip'
+          allowUpdates: true
 
   build-linux-x64:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
-
       - name: JSON to variables
         uses: rgarcia-phi/json-to-variables@v1.1.0
         with:
           filename: '.github/workflows/td-version.json'
           prefix: td
-
       - name: setup
-        run: |
-          sudo apt-get install make git zlib1g-dev libssl-dev gperf php-cli cmake g++
-
+        run: sudo apt-get install make git zlib1g-dev libssl-dev gperf php-cli cmake g++
       - name: clone
         run: |
           git clone https://github.com/tdlib/td.git
           cd td
           git checkout ${{ env.td_commit_hash }}
           git show --summary
-
       - name: build
         run: |
           cd td
@@ -224,20 +186,10 @@ jobs:
           cmake --build . --target install
           cd ..
           php SplitSource.php --undo
-
-#      - name: fake build
-#        run: |
-#          mkdir -p td/tdlib/lib
-#          echo test > td/tdlib/lib/libtdjson.so.1.8.4
-#          echo test > td/tdlib/lib/libtdjson.so
-#          rm td/tdlib/lib/libtdjson.so
-#          mv td/tdlib/lib/libtdjson.so.1.8.4 td/tdlib/lib/libtdjson.so
-
       - name: zip
         run: |
           cd td/tdlib/lib
           zip libtdjson.zip libtdjson.so
-
       - name: Release
         uses: ncipollo/release-action@v1
         with:
@@ -246,26 +198,23 @@ jobs:
           body: https://github.com/tdlib/td/tree/${{ env.td_commit_hash }}
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: 'td/tdlib/lib/libtdjson.zip'
+          allowUpdates: true
 
   build-windows-x64:
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v2
-      
-      
       - name: JSON to variables
         uses: rgarcia-phi/json-to-variables@v1.1.0
         with:
           filename: '.github/workflows/td-version.json'
           prefix: td
-
       - name: clone
         run: |
           git clone https://github.com/tdlib/td.git
           cd td
           git checkout ${{ env.td_commit_hash }}
           git show --summary
-
       - name: setup vcpkg
         run: |
           cd td
@@ -274,7 +223,6 @@ jobs:
           git checkout 
           ./bootstrap-vcpkg.bat
           ./vcpkg.exe install gperf:x64-windows openssl:x64-windows zlib:x64-windows
-
       - name: build
         run: |
           cd td
@@ -282,15 +230,6 @@ jobs:
           cd build
           cmake -A x64 -DCMAKE_INSTALL_PREFIX:PATH=../tdlib -DCMAKE_TOOLCHAIN_FILE:FILEPATH=../vcpkg/scripts/buildsystems/vcpkg.cmake ..
           cmake --build . --target install --config Release
-
-#      - name: fake build
-#        run: |
-#          mkdir -p td/tdlib/bin
-#          echo test > td/tdlib/bin/libcrypto-3-x64.dll
-#          echo test > td/tdlib/bin/libssl-3-x64.dll
-#          echo test > td/tdlib/bin/tdjson.dll
-#          echo test > td/tdlib/bin/zlib1.dll
-
       - name: zip
         run: |
           cd td/tdlib/bin
@@ -298,7 +237,6 @@ jobs:
           mv libcrypto-3-x64.dll libcrypto-1_1.dll
           mv libssl-3-x64.dll libssl-1_1.dll
           7z a -tzip dlls.zip libcrypto-1_1.dll libssl-1_1.dll tdjson.dll zlib1.dll
-
       - name: Release
         uses: ncipollo/release-action@v1
         with:
@@ -307,3 +245,4 @@ jobs:
           body: https://github.com/tdlib/td/tree/${{ env.td_commit_hash }}
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: 'td/tdlib/bin/dlls.zip'
+          allowUpdates: true
