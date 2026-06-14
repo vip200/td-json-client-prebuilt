@@ -236,6 +236,7 @@ jobs:
           ls
           mv libcrypto-3-x64.dll libcrypto-1_1.dll
           mv libssl-3-x64.dll libssl-1_1.dll
+          mv z.dll zlib1.dll
           7z a -tzip dlls.zip libcrypto-1_1.dll libssl-1_1.dll tdjson.dll zlib1.dll
       - name: Release
         uses: ncipollo/release-action@v1
